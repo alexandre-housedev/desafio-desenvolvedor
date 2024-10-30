@@ -6,7 +6,9 @@ use App\Models\UploadFile;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Jobs\ProcessInfoFileJob;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\YourCustomImport;
+use Illuminate\Support\Facades\Storage;
 
 class UploadFileController extends Controller
 {
@@ -48,7 +50,7 @@ class UploadFileController extends Controller
             'file_path' => $filePath,
         ]);
 
-        ProcessInfoFileJob::dispatch($uploadFile->id);
+        Excel::import(new YourCustomImport, Storage::disk('local')->path("{$filePath}"));
 
         return response()->json(['message' => 'Upload realizado com sucesso!', 'data' => $fileUpload], 201);
 
